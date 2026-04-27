@@ -1,0 +1,559 @@
+@import url('https://fonts.googleapis.com/css2?family=Pirata+One&family=Inter:wght@300;400;600;800&display=swap');
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #111111;
+  --accent-color: #666666;
+  --card-bg: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme='dark'] {
+  --bg-color: #050505;
+  --text-color: #f4f4f5;
+  --accent-color: #a1a1aa;
+  --card-bg: rgba(255, 255, 255, 0.03);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(circle at 50% 50%, var(--bg-color) 0%, var(--bg-color) 100%);
+  background-attachment: fixed;
+  color: var(--text-color);
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* Ensure the canvas covers the viewport and stays fixed behind content */
+#canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* The scrollable overlay */
+.overlay {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.overlay.visible {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Background Jolly Roger Watermark */
+.bg-watermark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  max-width: 800px;
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bg-watermark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 10%;
+  position: relative;
+}
+
+.content {
+  max-width: 45%;
+}
+
+.section.left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.section.right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+@media (max-width: 768px) {
+  .content {
+    max-width: 100%;
+  }
+}
+
+.pirate-font {
+  font-family: 'Pirata One', cursive;
+  letter-spacing: 0.05em;
+}
+
+h1 {
+  font-size: clamp(4rem, 8vw, 10rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: clamp(3rem, 6vw, 6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 2rem;
+  color: var(--accent-color);
+  font-weight: 400;
+}
+
+h1 {
+  font-size: clamp(3rem, 6vw, 6rem); /* Smaller */
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 400;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+}
+
+p {
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.tagline {
+  font-size: 1.2rem; /* Smaller */
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-color);
+  margin-bottom: 1.5rem;
+}
+
+.feature-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
+  margin-top: 4rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.feature-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(128, 128, 128, 0.1);
+  padding: 2rem;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle-btn {
+  background: var(--text-color);
+  color: var(--bg-color);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+  margin-top: 2rem;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.footer {
+  padding: 4rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.spacer {
+  height: 50vh;
+}
+
+/* LOADING SCREEN STYLES */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #050505;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+}
+
+.loading-screen--hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.loading-coaster {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.loading-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: white; /* Shinchan image has white bg, so this fills gaps */
+  border: 3px solid #ff9900;
+}
+
+.loading-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.loading-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.ring-of-fire {
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.1));
+}
+
+.ring-of-fire circle {
+  stroke: #ffffff;
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+}
+
+/* PHASE 2 UI STYLES */
+.phase2-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideDown 0.5s ease-out;
+}
+
+.phase2-nav p {
+  color: #ffffff;
+  font-weight: 600;
+  margin: 0;
+}
+
+.phase2-nav button {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.phase2-nav button:hover {
+  transform: scale(1.05);
+}
+
+.phase2-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+}
+
+.spider-logo-container {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 2rem;
+}
+
+.spider-logo-container img {
+  width: 100%;
+  filter: brightness(0) invert(1); /* Make it white */
+}
+
+.pulse {
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.progress-bar {
+  width: 300px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.3s ease;
+}
+
+.phase2-ready {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff; /* White screen as requested */
+  z-index: 10001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ready-content {
+  text-align: center;
+}
+
+.confirm-btn {
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 1rem 3rem;
+  font-size: 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 2rem;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.confirm-btn:hover {
+  transform: scale(1.1);
+}
+
+.phase3-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff; /* 60% White Background */
+  z-index: 11000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.p3-content {
+  width: 400px;
+  text-align: center;
+  padding: 3rem;
+  border: 2px solid #000000; /* 30% Black Accents */
+  background: #fdfdfd;
+}
+
+.p3-progress-container {
+  width: 100%;
+  height: 20px;
+  background: #000000; /* 30% Black */
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.p3-progress-fill {
+  height: 100%;
+  background: #808080; /* 10% Grey Progress */
+  transition: width 0.1s ease;
+}
+
+.phase3-complete {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 12000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* ── Phase 2 Environment Loading Overlay ── */
+.phase2-env-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.env-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(1px 1px at 10% 15%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 25% 35%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 40% 10%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 55% 45%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 70% 20%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 85% 55%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 15% 65%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 30% 80%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 50% 70%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 65% 85%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 80% 40%, #fff 50%, transparent 100%),
+    radial-gradient(1px 1px at 92% 75%, #fff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 5% 50%, #fff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 35% 25%, #fff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 60% 55%, #fff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90% 15%, #fff 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 20% 90%, rgba(255,255,255,0.6) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 45% 5%, rgba(255,255,255,0.6) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 75% 60%, rgba(255,255,255,0.6) 50%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 95% 30%, rgba(255,255,255,0.6) 50%, transparent 100%);
+  animation: envStarsTwinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes envStarsTwinkle {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.env-loading-content {
+  text-align: center;
+  color: #ffffff;
+  z-index: 1;
+  width: 280px;
+}
+
+.env-progress-number {
+  font-family: 'Inter', sans-serif;
+  font-weight: 200;
+  font-size: 4rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+}
+
+.env-progress-bar {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.env-progress-fill {
+  height: 100%;
+  background: #ffffff;
+  border-radius: 1px;
+  transition: width 0.08s linear;
+}
+
+.env-progress-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
